@@ -1,0 +1,47 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XCODE=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+
+      - name: List available simulators
+        run: xcrun simctl list devices available --json | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; [print(f'{rt}: {dev[\"name\"]} ({dev[\"udid\"]})') for rt,devs in d.items() for dev in devs if 'iPhone' in dev['name']]" | head -10
+
+      - name: Run tests
+        run: |
+          set -o pipefail
+          SIM_ID=$(xcrun simctl list devices available --json | python3 -c "
+          import json, sys
+          devices = json.load(sys.stdin)['devices']
+          for rt, devs in sorted(devices.items(), reverse=True):
+              for d in devs:
+                  if 'iPhone' in d['name'] and d['isAvailable']:
+                      print(d['udid'])
+                      sys.exit(0)
+          sys.exit(1)
+          ")
+          echo "Using simulator: $SIM_ID"
+          xcodebuild test \
+            -project JanellsRunApp.xcodeproj \
+            -scheme JanellsRunApp \
+            -destination "platform=iOS Simulator,id=$SIM_ID" \
+            -only-testing:JanellsRunAppTests \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO 2>&1 | tee build.log | tail -40
+          grep -q "TEST SUCCEEDED" build.log
