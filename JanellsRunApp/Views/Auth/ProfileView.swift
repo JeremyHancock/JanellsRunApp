@@ -4,6 +4,7 @@ struct ProfileView: View {
     let authService: AuthService
     @Environment(UserPreferences.self) private var preferences
     @State private var showSignOutConfirm = false
+    @State private var feedbackType: FeedbackType?
 
     var body: some View {
         NavigationStack {
@@ -49,6 +50,19 @@ struct ProfileView: View {
                         .pickerStyle(.segmented)
                     }
 
+                    Section("Feedback") {
+                        Button {
+                            feedbackType = .bug
+                        } label: {
+                            Label("Report a Bug", systemImage: "ladybug")
+                        }
+                        Button {
+                            feedbackType = .feature
+                        } label: {
+                            Label("Request a Feature", systemImage: "lightbulb")
+                        }
+                    }
+
                     Section {
                         Button(role: .destructive) {
                             showSignOutConfirm = true
@@ -79,6 +93,9 @@ struct ProfileView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Are you sure you want to sign out?")
+            }
+            .sheet(item: $feedbackType) { type in
+                FeedbackSheet(feedbackType: type, userName: authService.userName)
             }
         }
     }

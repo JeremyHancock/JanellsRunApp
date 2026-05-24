@@ -1,0 +1,6 @@
+name = "janells-run-feedback"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# After deploying, set the GitHub PAT as a secret:
+# wrangler secret put GITHUB_TOKEN
