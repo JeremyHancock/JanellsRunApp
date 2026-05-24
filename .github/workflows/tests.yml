@@ -21,22 +21,27 @@ jobs:
           sudo xcode-select -s "$XCODE/Contents/Developer"
           xcodebuild -version
 
-      - name: Resolve simulator
-        id: sim
-        run: |
-          DEST=$(xcodebuild -project JanellsRunApp.xcodeproj -scheme JanellsRunApp -showdestinations 2>/dev/null \
-            | grep 'platform:iOS Simulator' | grep 'iPhone' | head -1 \
-            | sed 's/.*{ //' | sed 's/ }$//')
-          echo "destination=$DEST" >> "$GITHUB_OUTPUT"
-          echo "Resolved destination: $DEST"
+      - name: List available simulators
+        run: xcrun simctl list devices available --json | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; [print(f'{rt}: {dev[\"name\"]} ({dev[\"udid\"]})') for rt,devs in d.items() for dev in devs if 'iPhone' in dev['name']]" | head -10
 
       - name: Run tests
         run: |
           set -o pipefail
+          SIM_ID=$(xcrun simctl list devices available --json | python3 -c "
+          import json, sys
+          devices = json.load(sys.stdin)['devices']
+          for rt, devs in sorted(devices.items(), reverse=True):
+              for d in devs:
+                  if 'iPhone' in d['name'] and d['isAvailable']:
+                      print(d['udid'])
+                      sys.exit(0)
+          sys.exit(1)
+          ")
+          echo "Using simulator: $SIM_ID"
           xcodebuild test \
             -project JanellsRunApp.xcodeproj \
             -scheme JanellsRunApp \
-            -destination '${{ steps.sim.outputs.destination }}' \
+            -destination "platform=iOS Simulator,id=$SIM_ID" \
             -only-testing:JanellsRunAppTests \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO 2>&1 | tee build.log | tail -40
           grep -q "TEST SUCCEEDED" build.log
