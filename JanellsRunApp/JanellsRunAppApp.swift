@@ -1,20 +1,21 @@
-//
-//  JanellsRunAppApp.swift
-//  JanellsRunApp
-//
-//  Created by Jeremy Hancock on 5/23/26.
-//
-
 import SwiftUI
 import SwiftData
 
 @main
 struct JanellsRunAppApp: App {
+    @State private var authService = AuthService()
+    @State private var preferences = UserPreferences()
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Run.self,
+            RaceEvent.self,
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            cloudKitDatabase: .automatic
+        )
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
@@ -23,10 +24,29 @@ struct JanellsRunAppApp: App {
         }
     }()
 
+    private var isSignedIn: Bool {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return authService.isSignedIn
+        #endif
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Group {
+                if isSignedIn {
+                    ContentView(authService: authService)
+                        .onAppear {
+                            SampleData.loadIfNeeded(into: sharedModelContainer.mainContext)
+                        }
+                } else {
+                    LoginView(authService: authService)
+                }
+            }
+            .preferredColorScheme(preferences.appearance.colorScheme)
         }
+        .environment(preferences)
         .modelContainer(sharedModelContainer)
     }
 }

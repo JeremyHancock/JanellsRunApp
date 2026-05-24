@@ -146,6 +146,7 @@
 				CODE_SIGN_ENTITLEMENTS = JanellsRunApp/JanellsRunApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JX5MS5C937;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JanellsRunApp/Info.plist;
@@ -179,6 +180,7 @@
 				CODE_SIGN_ENTITLEMENTS = JanellsRunApp/JanellsRunApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JX5MS5C937;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JanellsRunApp/Info.plist;

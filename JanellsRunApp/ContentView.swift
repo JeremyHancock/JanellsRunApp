@@ -1,61 +1,41 @@
-//
-//  ContentView.swift
-//  JanellsRunApp
-//
-//  Created by Jeremy Hancock on 5/23/26.
-//
-
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    let authService: AuthService
+    @State private var selectedTab = 1
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+        TabView(selection: $selectedTab) {
+            AddRunView()
+                .tabItem {
+                    Label("Add", systemImage: "plus.circle.fill")
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+                .tag(0)
+
+            RunListView()
+                .tabItem {
+                    Label("All Runs", systemImage: "list.bullet")
                 }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+                .tag(1)
+
+            PersonalRecordsView()
+                .tabItem {
+                    Label("PRs", systemImage: "trophy.fill")
                 }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
+                .tag(2)
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
+            RaceHistoryView()
+                .tabItem {
+                    Label("Races", systemImage: "flag.fill")
+                }
+                .tag(3)
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
+            ProfileView(authService: authService)
+                .tabItem {
+                    Label("Profile", systemImage: "person.crop.circle")
+                }
+                .tag(4)
         }
+        .tint(Theme.teal)
     }
-}
-
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
