@@ -55,7 +55,11 @@ struct PersonalRecordsView: View {
                     Spacer()
                 } else {
                     List(personalRecords) { pr in
-                        prRow(pr)
+                        NavigationLink {
+                            DistanceDetailView(distance: pr.distance)
+                        } label: {
+                            prRow(pr)
+                        }
                     }
                     .listStyle(.plain)
                     .animation(.default, value: personalRecords.map(\.id))

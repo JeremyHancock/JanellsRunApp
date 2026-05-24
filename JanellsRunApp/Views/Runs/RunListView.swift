@@ -13,6 +13,7 @@ struct RunListView: View {
     @State private var sortField: SortField = .date
     @State private var sortAscending = false
     @State private var runToDelete: Run?
+    @State private var runToEdit: Run?
     @State private var refreshID = UUID()
 
     private var filteredRuns: [Run] {
@@ -61,6 +62,8 @@ struct RunListView: View {
                             RunRowView(run: run, isEvenRow: index.isMultiple(of: 2))
                                 .listRowInsets(EdgeInsets())
                                 .listRowSeparator(.hidden)
+                                .contentShape(Rectangle())
+                                .onLongPressGesture { runToEdit = run }
                         }
                         .onDelete { offsets in
                             if let first = offsets.first {
@@ -90,6 +93,9 @@ struct RunListView: View {
                 if let run = runToDelete {
                     Text("Delete \(run.displayName) on \(run.formattedDate)?")
                 }
+            }
+            .sheet(item: $runToEdit) { run in
+                EditRunSheet(run: run)
             }
         }
     }
