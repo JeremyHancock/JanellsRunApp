@@ -38,7 +38,9 @@ struct JanellsRunAppApp: App {
                 if isSignedIn {
                     ContentView(authService: authService)
                         .onAppear {
+                            #if DEBUG
                             SampleData.loadIfNeeded(into: sharedModelContainer.mainContext)
+                            #endif
                         }
                 } else {
                     LoginView(authService: authService)
