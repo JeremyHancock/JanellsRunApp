@@ -5,7 +5,7 @@ struct RaceEventDetailView: View {
     @Environment(UserPreferences.self) private var preferences
 
     private var sortedRuns: [Run] {
-        event.runs.sorted { $0.date < $1.date }
+        (event.runs ?? []).sorted { $0.date < $1.date }
     }
 
     var body: some View {

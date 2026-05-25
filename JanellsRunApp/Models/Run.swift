@@ -3,16 +3,16 @@ import SwiftData
 
 @Model
 final class Run {
-    var id: UUID
+    var id: UUID = UUID()
     var event: RaceEvent?
-    var distance: Double
-    var date: Date
-    var durationSeconds: Int
-    var isRace: Bool
+    var distance: Double = 0
+    var date: Date = Date()
+    var durationSeconds: Int = 0
+    var isRace: Bool = false
     var healthKitID: String?
     var athlinksResultID: String?
     var notes: String?
-    var createdAt: Date
+    var createdAt: Date = Date()
 
     init(
         distance: Double,

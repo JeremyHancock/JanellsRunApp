@@ -12,7 +12,7 @@ jobs:
   test:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Select Xcode
         run: |
@@ -22,7 +22,15 @@ jobs:
           xcodebuild -version
 
       - name: List available simulators
-        run: xcrun simctl list devices available --json | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; [print(f'{rt}: {dev[\"name\"]} ({dev[\"udid\"]})') for rt,devs in d.items() for dev in devs if 'iPhone' in dev['name']]" | head -10
+        run: |
+          xcrun simctl list devices available --json | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)['devices']
+          for rt, devs in d.items():
+              for dev in devs:
+                  if 'iPhone' in dev['name']:
+                      print(f\"{rt}: {dev['name']} ({dev['udid']})\")
+          " | head -10
 
       - name: Run tests
         run: |
