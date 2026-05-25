@@ -36,12 +36,18 @@ struct JanellsRunAppApp: App {
         WindowGroup {
             Group {
                 if isSignedIn {
-                    ContentView(authService: authService)
-                        .onAppear {
-                            #if DEBUG
-                            SampleData.loadIfNeeded(into: sharedModelContainer.mainContext)
-                            #endif
+                    if preferences.hasCompletedOnboarding {
+                        ContentView(authService: authService)
+                            .onAppear {
+                                #if DEBUG
+                                SampleData.loadIfNeeded(into: sharedModelContainer.mainContext)
+                                #endif
+                            }
+                    } else {
+                        OnboardingView {
+                            preferences.hasCompletedOnboarding = true
                         }
+                    }
                 } else {
                     LoginView(authService: authService)
                 }

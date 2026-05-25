@@ -54,6 +54,12 @@ final class UserPreferences {
         }
     }
 
+    var hasCompletedOnboarding: Bool {
+        didSet {
+            UserDefaults.standard.set(hasCompletedOnboarding, forKey: "hasCompletedOnboarding")
+        }
+    }
+
     init() {
         if let stored = UserDefaults.standard.string(forKey: "distanceUnit"),
            let unit = DistanceUnit(rawValue: stored) {
@@ -68,6 +74,8 @@ final class UserPreferences {
         } else {
             self.appearance = .system
         }
+
+        self.hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
     }
 
     func displayDistance(_ miles: Double) -> Double {
