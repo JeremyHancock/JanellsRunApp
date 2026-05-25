@@ -10,6 +10,8 @@
 	</array>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Janell's Run App reads your running workouts to track your races and personal records.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Janell's Run App does not write any data to HealthKit. This permission is not used.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>UILaunchScreen</key>
