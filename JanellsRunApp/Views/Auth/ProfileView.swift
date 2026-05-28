@@ -3,7 +3,9 @@ import SwiftUI
 struct ProfileView: View {
     let authService: AuthService
     @Environment(UserPreferences.self) private var preferences
+    @Environment(\.modelContext) private var modelContext
     @State private var showSignOutConfirm = false
+    @State private var showDeleteAccountConfirm = false
     @State private var feedbackType: FeedbackType?
 
     var body: some View {
@@ -76,6 +78,20 @@ struct ProfileView: View {
                     }
 
                     Section {
+                        Button(role: .destructive) {
+                            showDeleteAccountConfirm = true
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text("Delete Account")
+                                Spacer()
+                            }
+                        }
+                    } footer: {
+                        Text("Permanently deletes your account and all running data.")
+                    }
+
+                    Section {
                         HStack {
                             Text("Version")
                             Spacer()
@@ -93,6 +109,14 @@ struct ProfileView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Are you sure you want to sign out?")
+            }
+            .alert("Delete Account", isPresented: $showDeleteAccountConfirm) {
+                Button("Delete Account", role: .destructive) {
+                    try? authService.deleteAccount(modelContext: modelContext)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This will permanently delete your account and all your running data. This action cannot be undone.")
             }
             .sheet(item: $feedbackType) { type in
                 FeedbackSheet(feedbackType: type, userName: authService.userName)
