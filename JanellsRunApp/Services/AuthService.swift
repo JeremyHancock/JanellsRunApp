@@ -1,4 +1,5 @@
 import AuthenticationServices
+import SwiftData
 import SwiftUI
 
 @Observable
@@ -47,6 +48,21 @@ final class AuthService {
 
     func signOut() {
         KeychainHelper.delete(key: userIDKey)
+        isSignedIn = false
+    }
+
+    func deleteAccount(modelContext: ModelContext) throws {
+        try modelContext.delete(model: Run.self)
+        try modelContext.delete(model: RaceEvent.self)
+        try modelContext.save()
+
+        KeychainHelper.delete(key: userIDKey)
+        KeychainHelper.delete(key: userNameKey)
+        KeychainHelper.delete(key: userEmailKey)
+
+        UserDefaults.standard.removeObject(forKey: "distanceUnit")
+        UserDefaults.standard.removeObject(forKey: "appearance")
+
         isSignedIn = false
     }
 
