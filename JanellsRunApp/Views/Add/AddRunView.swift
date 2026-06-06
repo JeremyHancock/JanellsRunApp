@@ -51,7 +51,7 @@ struct AddRunView: View {
                 HeaderView()
 
                 Picker("Input", selection: $selectedSegment) {
-                    Text("HealthKit").tag(0)
+                    Text("Apple Health").tag(0)
                     Text("CSV").tag(1)
                     Text("Manual").tag(2)
                 }
