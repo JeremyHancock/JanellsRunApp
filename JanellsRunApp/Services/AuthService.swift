@@ -10,7 +10,16 @@ final class AuthService {
     private let userNameKey = "appleUserName"
     private let userEmailKey = "appleUserEmail"
 
-    var userName: String? { KeychainHelper.read(key: userNameKey) }
+    var userName: String? {
+        get { KeychainHelper.read(key: userNameKey) }
+        set {
+            if let newValue, !newValue.isEmpty {
+                KeychainHelper.save(key: userNameKey, value: newValue)
+            } else {
+                KeychainHelper.delete(key: userNameKey)
+            }
+        }
+    }
     var userEmail: String? { KeychainHelper.read(key: userEmailKey) }
 
     init() {

@@ -6,6 +6,8 @@ struct ProfileView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var showSignOutConfirm = false
     @State private var showDeleteAccountConfirm = false
+    @State private var showEditName = false
+    @State private var editedName = ""
     @State private var feedbackType: FeedbackType?
 
     var body: some View {
@@ -15,20 +17,29 @@ struct ProfileView: View {
 
                 List {
                     Section {
-                        HStack(spacing: 14) {
-                            Image(systemName: "person.crop.circle.fill")
-                                .font(.system(size: 48))
-                                .foregroundStyle(Theme.teal)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(authService.userName ?? "Runner")
-                                    .font(.headline)
-                                if let email = authService.userEmail {
-                                    Text(email)
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
+                        Button {
+                            editedName = authService.userName ?? ""
+                            showEditName = true
+                        } label: {
+                            HStack(spacing: 14) {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .font(.system(size: 48))
+                                    .foregroundStyle(Theme.teal)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(authService.userName ?? "Runner")
+                                        .font(.headline)
+                                    if let email = authService.userEmail {
+                                        Text(email)
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
+                                    }
                                 }
+                                Spacer()
+                                Image(systemName: "pencil")
+                                    .foregroundStyle(.secondary)
                             }
                         }
+                        .tint(.primary)
                         .padding(.vertical, 4)
                     }
 
@@ -104,6 +115,14 @@ struct ProfileView: View {
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
+            .alert("Edit Name", isPresented: $showEditName) {
+                TextField("Name", text: $editedName)
+                Button("Save") {
+                    let trimmed = editedName.trimmingCharacters(in: .whitespaces)
+                    authService.userName = trimmed.isEmpty ? nil : trimmed
+                }
+                Button("Cancel", role: .cancel) {}
+            }
             .alert("Sign Out", isPresented: $showSignOutConfirm) {
                 Button("Sign Out", role: .destructive) { authService.signOut() }
                 Button("Cancel", role: .cancel) {}
