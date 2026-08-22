@@ -19,6 +19,29 @@ final class HealthKitService {
         isAuthorized = true
     }
 
+    private func fetchDistance(for workout: HKWorkout) async -> Double {
+        let distanceType = HKQuantityType(.distanceWalkingRunning)
+        let timePredicate = HKQuery.predicateForSamples(
+            withStart: workout.startDate,
+            end: workout.endDate,
+            options: .strictStartDate
+        )
+        let sourcePredicate = HKQuery.predicateForObjects(from: workout.sourceRevision.source)
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [timePredicate, sourcePredicate])
+
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: distanceType,
+                quantitySamplePredicate: predicate,
+                options: .cumulativeSum
+            ) { _, statistics, _ in
+                let miles = statistics?.sumQuantity()?.doubleValue(for: .mile()) ?? 0
+                continuation.resume(returning: miles)
+            }
+            store.execute(query)
+        }
+    }
+
     func fetchRunningWorkouts(since date: Date? = nil) async throws -> [HealthKitWorkout] {
         let workoutType = HKObjectType.workoutType()
 
@@ -48,19 +71,25 @@ final class HealthKitService {
                     return
                 }
 
-                let workouts = (samples as? [HKWorkout] ?? []).map { workout in
-                    let distance = workout.totalDistance?.doubleValue(for: .mile()) ?? 0
-                    let duration = Int(workout.duration)
+                let hkWorkouts = samples as? [HKWorkout] ?? []
+                Task {
+                    var results: [HealthKitWorkout] = []
+                    for workout in hkWorkouts {
+                        var distance = workout.totalDistance?.doubleValue(for: .mile()) ?? 0
 
-                    return HealthKitWorkout(
-                        id: workout.uuid.uuidString,
-                        date: workout.startDate,
-                        distance: (distance * 100).rounded() / 100,
-                        durationSeconds: duration
-                    )
+                        if distance == 0 {
+                            distance = await self.fetchDistance(for: workout)
+                        }
+
+                        results.append(HealthKitWorkout(
+                            id: workout.uuid.uuidString,
+                            date: workout.startDate,
+                            distance: (distance * 100).rounded() / 100,
+                            durationSeconds: Int(workout.duration)
+                        ))
+                    }
+                    continuation.resume(returning: results)
                 }
-
-                continuation.resume(returning: workouts)
             }
 
             store.execute(query)

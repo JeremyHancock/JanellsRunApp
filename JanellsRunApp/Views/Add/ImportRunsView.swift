@@ -24,7 +24,7 @@ struct ImportRunsView: View {
     var body: some View {
         VStack(spacing: 0) {
             if isLoading {
-                ProgressView("Checking HealthKit...")
+                ProgressView("Checking Apple Health...")
                     .padding()
             } else if let error = errorMessage {
                 Text(error)
@@ -101,7 +101,7 @@ struct ImportRunsView: View {
             try await healthKitService.requestAuthorization()
             workouts = try await healthKitService.fetchRunningWorkouts()
         } catch {
-            errorMessage = "Could not load workouts from HealthKit."
+            errorMessage = "Could not load workouts from Apple Health."
         }
         isLoading = false
     }
