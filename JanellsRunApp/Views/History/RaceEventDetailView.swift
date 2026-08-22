@@ -3,6 +3,7 @@ import SwiftUI
 struct RaceEventDetailView: View {
     let event: RaceEvent
     @Environment(UserPreferences.self) private var preferences
+    @State private var isEditing = false
 
     private var sortedRuns: [Run] {
         (event.runs ?? []).sorted { $0.date < $1.date }
@@ -17,6 +18,18 @@ struct RaceEventDetailView: View {
         .listStyle(.plain)
         .navigationTitle(event.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isEditing = true
+                } label: {
+                    Image(systemName: "pencil")
+                }
+            }
+        }
+        .sheet(isPresented: $isEditing) {
+            EditRaceEventSheet(event: event)
+        }
     }
 
     private func runRow(_ run: Run, previousRun: Run?) -> some View {
