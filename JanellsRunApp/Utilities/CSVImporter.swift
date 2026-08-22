@@ -47,6 +47,13 @@ enum CSVImporter {
                   let duration = parseDuration(fields[mapping.timeIdx].trimmingCharacters(in: .whitespacesAndNewlines))
             else { continue }
 
+            let isDuplicateRow = runs.contains { existing in
+                Calendar.current.isDate(existing.date, inSameDayAs: date)
+                    && abs(existing.distance - distance) < DuplicateChecker.exactDistanceTolerance
+                    && abs(existing.durationSeconds - duration) <= DuplicateChecker.durationTolerance
+            }
+            guard !isDuplicateRow else { continue }
+
             runs.append(CSVRun(date: date, distance: distance, durationSeconds: duration, title: title, activityType: activityType))
         }
 

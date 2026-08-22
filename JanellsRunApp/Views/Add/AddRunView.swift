@@ -5,6 +5,7 @@ struct AddRunView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(UserPreferences.self) private var preferences
     @Query(sort: \RaceEvent.name) private var events: [RaceEvent]
+    @Query private var existingRuns: [Run]
 
     @State private var selectedSegment = 0
     @State private var healthKitService = HealthKitService()
@@ -23,6 +24,8 @@ struct AddRunView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var isSuccess = false
+    @State private var showDuplicateConfirm = false
+    @State private var duplicateMessage = ""
 
     private var filteredEvents: [RaceEvent] {
         if eventSearchText.isEmpty { return events }
@@ -79,6 +82,10 @@ struct AddRunView: View {
                 Button("OK") {
                     if isSuccess { resetForm() }
                 }
+            }
+            .alert(duplicateMessage, isPresented: $showDuplicateConfirm) {
+                Button("Post Anyway") { performSave() }
+                Button("Cancel", role: .cancel) {}
             }
             .sheet(isPresented: $isCreatingNewEvent) {
                 newEventSheet
@@ -307,6 +314,18 @@ struct AddRunView: View {
             showAlert = true
             return
         }
+
+        if let existing = DuplicateChecker.firstLikelyDuplicate(in: existingRuns, date: runDate, distance: distance) {
+            duplicateMessage = "This looks like a duplicate: \(existing.displayName), \(preferences.formatDistance(existing.distance)) on \(existing.formattedDate) (\(existing.formattedTime)) is already logged."
+            showDuplicateConfirm = true
+            return
+        }
+
+        performSave()
+    }
+
+    private func performSave() {
+        guard let distance = resolvedDistance, distance > 0 else { return }
 
         let run = Run(
             distance: distance,
