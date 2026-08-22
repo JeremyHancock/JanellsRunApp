@@ -18,7 +18,11 @@ struct ImportRunsView: View {
     }
 
     private var unimportedWorkouts: [HealthKitWorkout] {
-        workouts.filter { !importedIDs.contains($0.id) }
+        workouts.filter { workout in
+            guard !importedIDs.contains(workout.id) else { return false }
+            // Fallback for runs that entered without a HealthKit ID (CSV, manual)
+            return DuplicateChecker.firstLikelyDuplicate(in: existingRuns, date: workout.date, distance: workout.distance) == nil
+        }
     }
 
     var body: some View {

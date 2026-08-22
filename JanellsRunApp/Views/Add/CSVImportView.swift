@@ -35,9 +35,7 @@ struct CSVImportView: View {
         parsedRuns.filter { csv in
             let miles = convertedDistance(csv.distance)
             return !existingRuns.contains { existing in
-                abs(existing.date.timeIntervalSince(csv.date)) < 60
-                && abs(existing.distance - miles) < 0.01
-                && abs(existing.durationSeconds - csv.durationSeconds) < 2
+                DuplicateChecker.isSameRun(as: existing, date: csv.date, distance: miles, durationSeconds: csv.durationSeconds)
             }
         }
     }
