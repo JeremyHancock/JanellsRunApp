@@ -5,7 +5,15 @@ import HealthKit
 final class HealthKitService {
     private let store = HKHealthStore()
     var isAuthorized = false
-    var isAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
+    /// HealthKit has no data in the Simulator, so treat it as unavailable there
+    /// rather than prompting for access that can never return workouts.
+    var isAvailable: Bool {
+        #if targetEnvironment(simulator)
+        return false
+        #else
+        return HKHealthStore.isHealthDataAvailable()
+        #endif
+    }
 
     func requestAuthorization() async throws {
         guard isAvailable else { return }

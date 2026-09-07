@@ -14,11 +14,19 @@
 			remoteGlobalIDString = 2A11C8B42FC2729D002DA79B;
 			remoteInfo = JanellsRunApp;
 		};
+		BB000001BBBB000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A11C8AD2FC2729D002DA79B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2A11C8B42FC2729D002DA79B;
+			remoteInfo = JanellsRunApp;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		2A11C8B52FC2729D002DA79B /* JanellsRunApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JanellsRunApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA000002AAAA000000000002 /* JanellsRunAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JanellsRunAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB000002BBBB000000000002 /* JanellsRunAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JanellsRunAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -46,6 +54,11 @@
 			path = JanellsRunAppTests;
 			sourceTree = "<group>";
 		};
+		BB000003BBBB000000000003 /* JanellsRunAppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = JanellsRunAppUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +76,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BB000004BBBB000000000004 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -71,6 +91,7 @@
 			children = (
 				2A11C8B72FC2729D002DA79B /* JanellsRunApp */,
 				AA000003AAAA000000000003 /* JanellsRunAppTests */,
+				BB000003BBBB000000000003 /* JanellsRunAppUITests */,
 				2A11C8B62FC2729D002DA79B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -80,6 +101,7 @@
 			children = (
 				2A11C8B52FC2729D002DA79B /* JanellsRunApp.app */,
 				AA000002AAAA000000000002 /* JanellsRunAppTests.xctest */,
+				BB000002BBBB000000000002 /* JanellsRunAppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -130,6 +152,27 @@
 			productReference = AA000002AAAA000000000002 /* JanellsRunAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		BB000005BBBB000000000005 /* JanellsRunAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB000009BBBB000000000009 /* Build configuration list for PBXNativeTarget "JanellsRunAppUITests" */;
+			buildPhases = (
+				BB000006BBBB000000000006 /* Sources */,
+				BB000004BBBB000000000004 /* Frameworks */,
+				BB000007BBBB000000000007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BB000008BBBB000000000008 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				BB000003BBBB000000000003 /* JanellsRunAppUITests */,
+			);
+			name = JanellsRunAppUITests;
+			productName = JanellsRunAppUITests;
+			productReference = BB000002BBBB000000000002 /* JanellsRunAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -144,6 +187,10 @@
 						CreatedOnToolsVersion = 26.5;
 					};
 					AA000005AAAA000000000005 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 2A11C8B42FC2729D002DA79B;
+					};
+					BB000005BBBB000000000005 = {
 						CreatedOnToolsVersion = 26.5;
 						TestTargetID = 2A11C8B42FC2729D002DA79B;
 					};
@@ -165,6 +212,7 @@
 			targets = (
 				2A11C8B42FC2729D002DA79B /* JanellsRunApp */,
 				AA000005AAAA000000000005 /* JanellsRunAppTests */,
+				BB000005BBBB000000000005 /* JanellsRunAppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -178,6 +226,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AA000007AAAA000000000007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB000007BBBB000000000007 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -201,6 +256,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BB000006BBBB000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -208,6 +270,11 @@
 			isa = PBXTargetDependency;
 			target = 2A11C8B42FC2729D002DA79B /* JanellsRunApp */;
 			targetProxy = AA000001AAAA000000000001 /* PBXContainerItemProxy */;
+		};
+		BB000008BBBB000000000008 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2A11C8B42FC2729D002DA79B /* JanellsRunApp */;
+			targetProxy = BB000001BBBB000000000001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -437,6 +504,40 @@
 			};
 			name = Release;
 		};
+		BB00000ABBBB00000000000A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = JX5MS5C937;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremyhancock.JanellsRunAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = JanellsRunApp;
+			};
+			name = Debug;
+		};
+		BB00000BBBBB00000000000B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = JX5MS5C937;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeremyhancock.JanellsRunAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = JanellsRunApp;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -463,6 +564,15 @@
 			buildConfigurations = (
 				AA00000AAAAA00000000000A /* Debug */,
 				AA00000BAAAA00000000000B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BB000009BBBB000000000009 /* Build configuration list for PBXNativeTarget "JanellsRunAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB00000ABBBB00000000000A /* Debug */,
+				BB00000BBBBB00000000000B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

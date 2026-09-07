@@ -54,7 +54,17 @@ final class UserPreferences {
         }
     }
 
+    /// Athlinks athlete ID used by the Athlinks importer, remembered so a
+    /// re-sync after a race weekend is one tap.
+    var athlinksAthleteID: String? {
+        didSet {
+            UserDefaults.standard.set(athlinksAthleteID, forKey: "athlinksAthleteID")
+        }
+    }
+
     init() {
+        self.athlinksAthleteID = UserDefaults.standard.string(forKey: "athlinksAthleteID")
+
         if let stored = UserDefaults.standard.string(forKey: "distanceUnit"),
            let unit = DistanceUnit(rawValue: stored) {
             self.distanceUnit = unit
