@@ -54,9 +54,10 @@ struct AddRunView: View {
                 HeaderView()
 
                 Picker("Input", selection: $selectedSegment) {
-                    Text("Apple Health").tag(0)
-                    Text("CSV").tag(1)
-                    Text("Manual").tag(2)
+                    Text("Health").tag(0)
+                    Text("Athlinks").tag(1)
+                    Text("CSV").tag(2)
+                    Text("Manual").tag(3)
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
@@ -67,6 +68,8 @@ struct AddRunView: View {
                     case 0:
                         ImportRunsView(healthKitService: healthKitService)
                     case 1:
+                        AthlinksImportView()
+                    case 2:
                         CSVImportView()
                     default:
                         manualEntryForm
