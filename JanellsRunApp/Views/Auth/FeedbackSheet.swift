@@ -2,7 +2,6 @@ import SwiftUI
 
 struct FeedbackSheet: View {
     @State var feedbackType: FeedbackType
-    var userName: String?
     @Environment(\.dismiss) private var dismiss
 
     @State private var title = ""
@@ -94,8 +93,7 @@ struct FeedbackSheet: View {
                 try await FeedbackService.submit(
                     type: feedbackType,
                     title: title,
-                    description: description,
-                    userName: userName
+                    description: description
                 )
                 submitted = true
             } catch {
