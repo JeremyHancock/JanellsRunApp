@@ -138,7 +138,7 @@ struct ProfileView: View {
                 Text("This will permanently delete your account and all your running data. This action cannot be undone.")
             }
             .sheet(item: $feedbackType) { type in
-                FeedbackSheet(feedbackType: type, userName: authService.userName)
+                FeedbackSheet(feedbackType: type)
             }
         }
     }

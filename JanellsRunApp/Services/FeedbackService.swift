@@ -17,11 +17,9 @@ enum FeedbackService {
     // Update this after deploying the Cloudflare Worker
     static let workerURL = URL(string: "https://janells-run-feedback.jeremyhancock32.workers.dev")!
 
-    static func submit(type: FeedbackType, title: String, description: String, userName: String?) async throws {
-        var deviceInfo = "\(deviceModel()), iOS \(UIDevice.current.systemVersion), v\(appVersion())"
-        if let name = userName, !name.isEmpty {
-            deviceInfo = "\(name) — \(deviceInfo)"
-        }
+    // Feedback becomes an issue in a public repo, so nothing about who sent it goes along
+    static func submit(type: FeedbackType, title: String, description: String) async throws {
+        let deviceInfo = "\(deviceModel()), iOS \(UIDevice.current.systemVersion), v\(appVersion())"
 
         let payload: [String: String] = [
             "type": type.apiValue,
