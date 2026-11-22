@@ -3,11 +3,15 @@ import SwiftData
 
 struct DistanceDetailView: View {
     let distance: Double
+    var includeTraining = false
     @Query(sort: \Run.date) private var allRuns: [Run]
     @Environment(UserPreferences.self) private var preferences
 
     private var runsAtDistance: [Run] {
-        allRuns.filter { $0.isRace && abs($0.distance - distance) < 0.05 }
+        let key = DistancePreset.groupingKey(forMiles: distance)
+        return allRuns.filter {
+            ($0.isRace || includeTraining) && DistancePreset.groupingKey(forMiles: $0.distance) == key
+        }
     }
 
     private var title: String {

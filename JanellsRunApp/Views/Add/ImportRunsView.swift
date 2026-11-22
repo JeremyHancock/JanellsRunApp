@@ -160,7 +160,7 @@ struct EnrichWorkoutSheet: View {
 
                 if isRace {
                     Section("Event") {
-                        TextField("Search events...", text: $eventSearchText)
+                        TextField("Search or add an event", text: $eventSearchText)
 
                         ForEach(filteredEvents) { event in
                             Button {
@@ -186,10 +186,9 @@ struct EnrichWorkoutSheet: View {
                             }
                         }
 
-                        Button {
+                        NewEventButton(searchText: eventSearchText, existingNames: events.map(\.name)) { name in
+                            newEventName = name
                             isCreatingNewEvent = true
-                        } label: {
-                            Label("New Event", systemImage: "plus.circle")
                         }
                     }
                 }

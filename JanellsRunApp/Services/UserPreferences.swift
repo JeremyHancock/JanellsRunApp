@@ -62,8 +62,16 @@ final class UserPreferences {
         }
     }
 
+    /// Whether training runs count alongside races on the PRs tab.
+    var includeTrainingInPRs: Bool {
+        didSet {
+            UserDefaults.standard.set(includeTrainingInPRs, forKey: "includeTrainingInPRs")
+        }
+    }
+
     init() {
         self.athlinksAthleteID = UserDefaults.standard.string(forKey: "athlinksAthleteID")
+        self.includeTrainingInPRs = UserDefaults.standard.bool(forKey: "includeTrainingInPRs")
 
         if let stored = UserDefaults.standard.string(forKey: "distanceUnit"),
            let unit = DistanceUnit(rawValue: stored) {
@@ -77,6 +85,17 @@ final class UserPreferences {
             self.appearance = mode
         } else {
             self.appearance = .system
+        }
+    }
+
+    /// Back to defaults, in memory and on disk. Used when the account is deleted.
+    func reset() {
+        distanceUnit = .miles
+        appearance = .system
+        athlinksAthleteID = nil
+        includeTrainingInPRs = false
+        for key in ["distanceUnit", "appearance", "athlinksAthleteID", "includeTrainingInPRs"] {
+            UserDefaults.standard.removeObject(forKey: key)
         }
     }
 

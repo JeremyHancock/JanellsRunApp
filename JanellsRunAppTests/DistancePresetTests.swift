@@ -30,4 +30,15 @@ struct DistancePresetTests {
         #expect(presets[3].kilometers == 21.1)  // Half Marathon
         #expect(presets[4].kilometers == 42.2)  // Marathon
     }
+
+    @Test func groupingKeyTreatsNearPresetDistancesAsOne() {
+        #expect(DistancePreset.groupingKey(forMiles: 3.1) == DistancePreset.groupingKey(forMiles: 3.12))
+        #expect(DistancePreset.groupingKey(forMiles: 13.1) == DistancePreset.groupingKey(forMiles: 13.14))
+        #expect(DistancePreset.groupingKey(forMiles: 3.1) != DistancePreset.groupingKey(forMiles: 6.2))
+    }
+
+    @Test func groupingKeyKeepsOtherDistancesApart() {
+        #expect(DistancePreset.groupingKey(forMiles: 10.0) == "10.00")
+        #expect(DistancePreset.groupingKey(forMiles: 10.0) != DistancePreset.groupingKey(forMiles: 9.3))
+    }
 }

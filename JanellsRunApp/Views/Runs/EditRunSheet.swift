@@ -117,7 +117,7 @@ struct EditRunSheet: View {
             Text("Event")
                 .font(.headline)
 
-            TextField("Search events...", text: $eventSearchText)
+            TextField("Search or add an event", text: $eventSearchText)
                 .textFieldStyle(.roundedBorder)
 
             if !filteredEvents.isEmpty && !eventSearchText.isEmpty {
@@ -168,12 +168,11 @@ struct EditRunSheet: View {
                 }
             }
 
-            Button {
+            NewEventButton(searchText: eventSearchText, existingNames: events.map(\.name)) { name in
+                newEventName = name
                 isCreatingNewEvent = true
-            } label: {
-                Label("New Event", systemImage: "plus.circle")
-                    .font(.subheadline)
             }
+            .font(.subheadline)
         }
     }
 

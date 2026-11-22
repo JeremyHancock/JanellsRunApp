@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 struct ProfileView: View {
@@ -6,6 +7,7 @@ struct ProfileView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var showSignOutConfirm = false
     @State private var showDeleteAccountConfirm = false
+    @State private var showDeleteAccountFailed = false
     @State private var showEditName = false
     @State private var editedName = ""
     @State private var feedbackType: FeedbackType?
@@ -131,11 +133,20 @@ struct ProfileView: View {
             }
             .alert("Delete Account", isPresented: $showDeleteAccountConfirm) {
                 Button("Delete Account", role: .destructive) {
-                    try? authService.deleteAccount(modelContext: modelContext)
+                    do {
+                        try authService.deleteAccount(modelContext: modelContext, preferences: preferences)
+                    } catch {
+                        showDeleteAccountFailed = true
+                    }
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("This will permanently delete your account and all your running data. This action cannot be undone.")
+            }
+            .alert("Couldn't Delete Account", isPresented: $showDeleteAccountFailed) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Your data was not deleted. Please try again.")
             }
             .sheet(item: $feedbackType) { type in
                 FeedbackSheet(feedbackType: type)
