@@ -5,7 +5,7 @@ An iOS app for tracking running workouts, race results, and personal records. Bu
 ## Features
 
 - **Log Runs** -- manually add training runs and races with distance, time, and notes
-- **Import Runs** -- bring in data via CSV or Apple HealthKit
+- **Import Runs** -- bring in data via CSV, Apple HealthKit, or an Athlinks profile
 - **Personal Records** -- automatically tracks PRs across standard distances
 - **Race History** -- view past race events with detailed results
 - **iCloud Sync** -- data syncs across devices via CloudKit
@@ -43,8 +43,9 @@ JanellsRunApp/
     Records/      #   Personal records
     Runs/         #   Run list and detail
     Shared/       #   Theme, reusable components
-  Services/       # AuthService, HealthKitService
-  Utilities/      # CSV importer, distance presets, formatting
+  Services/       # Auth, HealthKit, Athlinks, feedback, preferences
+  Utilities/      # Importers, duplicate checks, distance presets, formatting
+cloudflare-worker/  # Turns in-app feedback into GitHub issues
 ```
 
 ## Contributing
