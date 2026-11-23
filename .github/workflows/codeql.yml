@@ -1,0 +1,75 @@
+name: CodeQL
+
+# Replaces GitHub's default code scanning setup, which can't build the Xcode
+# project on its own (it finds no Swift targets), so the app code went unscanned.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "23 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Quick scans (under a minute each) that run on every PR and push.
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, actions]
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:${{ matrix.language }}
+
+  # The Swift scan needs a full build and takes about 15 minutes, so it only
+  # runs on the weekly schedule or when started by hand from the Actions tab.
+  analyze-swift:
+    name: Analyze (swift)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: macos-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: swift
+          build-mode: manual
+
+      # CodeQL watches this build to see the Swift code. No signing is needed
+      # for a simulator build.
+      - name: Build app
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project JanellsRunApp.xcodeproj \
+            -scheme JanellsRunApp \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO 2>&1 | tail -30
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:swift
