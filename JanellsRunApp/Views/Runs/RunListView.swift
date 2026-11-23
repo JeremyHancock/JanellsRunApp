@@ -14,7 +14,6 @@ struct RunListView: View {
     @State private var sortAscending = false
     @State private var runToDelete: Run?
     @State private var runToEdit: Run?
-    @State private var refreshID = UUID()
 
     private var filteredRuns: [Run] {
         let filtered = showRacesOnly
@@ -73,7 +72,6 @@ struct RunListView: View {
                     }
                     .listStyle(.plain)
                     .animation(.default, value: filteredRuns.map(\.id))
-                    .refreshable { refreshID = UUID() }
                 }
             }
             .navigationTitle("All Runs")

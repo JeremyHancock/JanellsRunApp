@@ -1,3 +1,4 @@
+import OSLog
 import SwiftUI
 import SwiftData
 
@@ -5,8 +6,12 @@ import SwiftData
 struct JanellsRunAppApp: App {
     @State private var authService = AuthService()
     @State private var preferences = UserPreferences()
+    /// Nil when the store couldn't be opened; the app then shows a retry screen.
+    @State private var modelContainer = Self.makeModelContainer()
 
-    var sharedModelContainer: ModelContainer = {
+    private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "JanellsRunApp", category: "store")
+
+    private static func makeModelContainer() -> ModelContainer? {
         let schema = Schema([
             Run.self,
             RaceEvent.self,
@@ -20,9 +25,10 @@ struct JanellsRunAppApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            logger.error("Could not create ModelContainer: \(error)")
+            return nil
         }
-    }()
+    }
 
     private var isSignedIn: Bool {
         #if targetEnvironment(simulator)
@@ -35,20 +41,33 @@ struct JanellsRunAppApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if isSignedIn {
-                    ContentView(authService: authService)
-                        .onAppear {
-                            #if DEBUG
-                            SampleData.loadIfNeeded(into: sharedModelContainer.mainContext)
-                            #endif
-                        }
+                if let modelContainer {
+                    signedInOrLogin
+                        .modelContainer(modelContainer)
                 } else {
-                    LoginView(authService: authService)
+                    StoreUnavailableView {
+                        modelContainer = Self.makeModelContainer()
+                    }
                 }
             }
             .preferredColorScheme(preferences.appearance.colorScheme)
         }
         .environment(preferences)
-        .modelContainer(sharedModelContainer)
+    }
+
+    @ViewBuilder
+    private var signedInOrLogin: some View {
+        if isSignedIn {
+            ContentView(authService: authService)
+                .onAppear {
+                    #if DEBUG
+                    if let modelContainer {
+                        SampleData.loadIfNeeded(into: modelContainer.mainContext)
+                    }
+                    #endif
+                }
+        } else {
+            LoginView(authService: authService)
+        }
     }
 }
