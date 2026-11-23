@@ -62,7 +62,6 @@ struct RunListView: View {
                                 .listRowInsets(EdgeInsets())
                                 .listRowSeparator(.hidden)
                                 .contentShape(Rectangle())
-                                .onTapGesture { runToEdit = run }
                                 .onLongPressGesture { runToEdit = run }
                         }
                         .onDelete { offsets in

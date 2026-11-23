@@ -19,6 +19,7 @@ struct RaceEventDetailView: View {
         List {
             ForEach(Array(sortedRuns.enumerated()), id: \.element.id) { index, run in
                 runRow(run, previousRun: previousRun(before: index))
+                    .editsRun(run)
             }
         }
         .listStyle(.plain)

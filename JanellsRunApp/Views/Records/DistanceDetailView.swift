@@ -22,6 +22,7 @@ struct DistanceDetailView: View {
         List {
             ForEach(Array(runsAtDistance.enumerated()), id: \.element.id) { index, run in
                 runRow(run, previousRun: index > 0 ? runsAtDistance[index - 1] : nil)
+                    .editsRun(run)
             }
         }
         .listStyle(.plain)
