@@ -7,32 +7,18 @@ struct PersonalRecordsView: View {
 
     @State private var selectedYear: Int?
 
-    private var yearOptions: [Int] {
-        let currentYear = Calendar.current.component(.year, from: Date())
-        return Array((currentYear - 9)...currentYear).reversed()
+    private var eligibleRuns: [Run] {
+        PersonalRecords.eligibleRuns(from: allRuns, includeTraining: preferences.includeTrainingInPRs)
     }
 
-    private var races: [Run] {
-        var filtered = allRuns.filter { $0.isRace }
-        if let year = selectedYear {
-            filtered = filtered.filter { $0.year == year }
-        }
-        return filtered
+    /// Only years that have something to show, so old imported races are reachable.
+    private var yearOptions: [Int] {
+        Set(eligibleRuns.map(\.year)).sorted(by: >)
     }
 
     private var personalRecords: [Run] {
-        var bestByDistance: [String: Run] = [:]
-        for run in races {
-            let key = String(format: "%.2f", run.distance)
-            if let existing = bestByDistance[key] {
-                if run.durationSeconds < existing.durationSeconds {
-                    bestByDistance[key] = run
-                }
-            } else {
-                bestByDistance[key] = run
-            }
-        }
-        return bestByDistance.values.sorted { $0.distance > $1.distance }
+        let runs = selectedYear.map { year in eligibleRuns.filter { $0.year == year } } ?? eligibleRuns
+        return PersonalRecords.best(in: runs)
     }
 
     var body: some View {
@@ -41,11 +27,12 @@ struct PersonalRecordsView: View {
                 HeaderView()
 
                 yearPicker
+                trainingToggle
 
                 if personalRecords.isEmpty {
                     Spacer()
                     if selectedYear != nil {
-                        Text("No races logged for this year.")
+                        Text(preferences.includeTrainingInPRs ? "No runs logged for this year." : "No races logged for this year.")
                             .foregroundStyle(.secondary)
                     } else {
                         Text("Your PRs are gonna look AMAZING here")
@@ -56,7 +43,7 @@ struct PersonalRecordsView: View {
                 } else {
                     List(personalRecords) { pr in
                         NavigationLink {
-                            DistanceDetailView(distance: pr.distance)
+                            DistanceDetailView(distance: pr.distance, includeTraining: preferences.includeTrainingInPRs)
                         } label: {
                             prRow(pr)
                         }
@@ -67,7 +54,21 @@ struct PersonalRecordsView: View {
             }
             .navigationTitle("Personal Records")
             .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: yearOptions) {
+                if let year = selectedYear, !yearOptions.contains(year) {
+                    selectedYear = nil
+                }
+            }
         }
+    }
+
+    private var trainingToggle: some View {
+        @Bindable var prefs = preferences
+        return Toggle("Include training runs", isOn: $prefs.includeTrainingInPRs.animation())
+            .font(.subheadline)
+            .tint(Theme.teal)
+            .padding(.horizontal)
+            .padding(.bottom, 8)
     }
 
     private var yearPicker: some View {

@@ -60,7 +60,7 @@ final class AuthService {
         isSignedIn = false
     }
 
-    func deleteAccount(modelContext: ModelContext) throws {
+    func deleteAccount(modelContext: ModelContext, preferences: UserPreferences) throws {
         try modelContext.delete(model: Run.self)
         try modelContext.delete(model: RaceEvent.self)
         try modelContext.save()
@@ -69,8 +69,7 @@ final class AuthService {
         KeychainHelper.delete(key: userNameKey)
         KeychainHelper.delete(key: userEmailKey)
 
-        UserDefaults.standard.removeObject(forKey: "distanceUnit")
-        UserDefaults.standard.removeObject(forKey: "appearance")
+        preferences.reset()
 
         isSignedIn = false
     }

@@ -74,4 +74,20 @@ struct UserPreferencesTests {
         #expect(DistanceUnit.miles.abbreviation == "mi")
         #expect(DistanceUnit.kilometers.abbreviation == "km")
     }
+
+    @Test func resetClearsEverythingStored() {
+        let prefs = UserPreferences()
+        prefs.distanceUnit = .kilometers
+        prefs.appearance = .dark
+        prefs.athlinksAthleteID = "12345"
+        prefs.includeTrainingInPRs = true
+
+        prefs.reset()
+
+        let fresh = UserPreferences()
+        #expect(fresh.distanceUnit == .miles)
+        #expect(fresh.appearance == .system)
+        #expect(fresh.athlinksAthleteID == nil)
+        #expect(fresh.includeTrainingInPRs == false)
+    }
 }

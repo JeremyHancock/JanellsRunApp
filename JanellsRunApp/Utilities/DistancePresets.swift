@@ -21,4 +21,10 @@ struct DistancePreset: Identifiable, Hashable {
     static func matchingPreset(forMiles miles: Double) -> DistancePreset? {
         presets.first { abs($0.miles - miles) < 0.05 }
     }
+
+    /// Runs with the same key are the same distance for PR purposes: a 3.12 mi
+    /// watch recording and a 3.1 mi manual entry are both "5K".
+    static func groupingKey(forMiles miles: Double) -> String {
+        matchingPreset(forMiles: miles)?.label ?? String(format: "%.2f", miles)
+    }
 }
