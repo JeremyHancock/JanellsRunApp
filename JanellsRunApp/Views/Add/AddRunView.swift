@@ -21,6 +21,7 @@ struct AddRunView: View {
     @State private var hours = ""
     @State private var minutes = ""
     @State private var seconds = ""
+    @State private var notes = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var isSuccess = false
@@ -104,6 +105,7 @@ struct AddRunView: View {
                 DistancePicker(selectedPreset: $selectedPreset, customDistance: $customDistance)
                 dateSection
                 timeSection
+                NotesField(text: $notes)
                 postButton
             }
             .padding()
@@ -334,7 +336,8 @@ struct AddRunView: View {
             date: runDate,
             durationSeconds: totalSeconds,
             isRace: isRace,
-            event: selectedEvent
+            event: selectedEvent,
+            notes: NotesField.storedValue(notes)
         )
         modelContext.insert(run)
 
@@ -358,5 +361,6 @@ struct AddRunView: View {
         hours = ""
         minutes = ""
         seconds = ""
+        notes = ""
     }
 }

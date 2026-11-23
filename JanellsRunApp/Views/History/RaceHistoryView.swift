@@ -3,6 +3,7 @@ import SwiftData
 
 struct RaceHistoryView: View {
     @Query(sort: \RaceEvent.name) private var events: [RaceEvent]
+    @Environment(UserPreferences.self) private var preferences
 
     private var eventsWithRuns: [RaceEvent] {
         events.filter { !($0.runs ?? []).isEmpty }
@@ -35,9 +36,9 @@ struct RaceHistoryView: View {
     }
 
     private func eventRow(_ event: RaceEvent) -> some View {
-        let sortedRuns = (event.runs ?? []).sorted { $0.date < $1.date }
-        let bestRun = sortedRuns.min { $0.durationSeconds < $1.durationSeconds }
-        let yearCount = Set(sortedRuns.map { $0.year }).count
+        let runs = event.runs ?? []
+        let bestRun = PersonalRecords.eventBest(in: runs, typicalDistance: event.typicalDistance)
+        let yearCount = Set(runs.map { $0.year }).count
 
         return VStack(alignment: .leading, spacing: 4) {
             Text(event.name)
@@ -54,11 +55,18 @@ struct RaceHistoryView: View {
                     .foregroundStyle(.secondary)
             }
             if let best = bestRun {
-                Text("PR: \(best.formattedTime)")
+                Text(prText(best, showDistance: PersonalRecords.hasMultipleDistances(runs)))
                     .font(.subheadline)
                     .foregroundStyle(Theme.teal)
             }
         }
         .padding(.vertical, 2)
+    }
+
+    /// Names the distance when the event has been run at more than one.
+    private func prText(_ best: Run, showDistance: Bool) -> String {
+        guard showDistance else { return "PR: \(best.formattedTime)" }
+        let distance = DistancePreset.label(forMiles: best.distance) ?? preferences.formatDistance(best.distance)
+        return "PR: \(best.formattedTime) (\(distance))"
     }
 }

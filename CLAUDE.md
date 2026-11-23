@@ -33,7 +33,7 @@ Models/       SwiftData @Model classes: Run, RaceEvent, HealthKitWorkout
 Views/        SwiftUI views grouped by feature (Add, Auth, History, Records, Runs, Shared)
 Services/     AuthService (Apple sign-in + Keychain), HealthKitService, AthlinksService,
               FeedbackService, UserPreferences (UserDefaults-backed settings)
-Utilities/    CSVImporter, AthlinksImporter, DuplicateChecker, DistancePresets,
+Utilities/    CSVImporter, CSVExporter, AthlinksImporter, DuplicateChecker, DistancePresets,
               PersonalRecords, EventSearch, SampleData, TimeFormatter
 ```
 

@@ -16,6 +16,7 @@ struct EditRunSheet: View {
     @State private var hours: String
     @State private var minutes: String
     @State private var seconds: String
+    @State private var notes: String
     @State private var eventSearchText = ""
     @State private var isCreatingNewEvent = false
     @State private var newEventName = ""
@@ -26,6 +27,7 @@ struct EditRunSheet: View {
         _isRace = State(initialValue: run.isRace)
         _selectedEvent = State(initialValue: run.event)
         _runDate = State(initialValue: run.date)
+        _notes = State(initialValue: run.notes ?? "")
 
         let h = run.durationSeconds / 3600
         let m = (run.durationSeconds % 3600) / 60
@@ -73,6 +75,7 @@ struct EditRunSheet: View {
                     DistancePicker(selectedPreset: $selectedPreset, customDistance: $customDistance)
                     dateSection
                     timeSection
+                    NotesField(text: $notes)
                 }
                 .padding()
             }
@@ -267,6 +270,7 @@ struct EditRunSheet: View {
         run.durationSeconds = totalSeconds
         run.isRace = isRace
         run.event = isRace ? selectedEvent : nil
+        run.notes = NotesField.storedValue(notes)
 
         if isRace, let event = selectedEvent, event.typicalDistance == nil {
             event.typicalDistance = distance

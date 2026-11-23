@@ -5,6 +5,7 @@ struct ProfileView: View {
     let authService: AuthService
     @Environment(UserPreferences.self) private var preferences
     @Environment(\.modelContext) private var modelContext
+    @Query private var runs: [Run]
     @State private var showSignOutConfirm = false
     @State private var showDeleteAccountConfirm = false
     @State private var showDeleteAccountFailed = false
@@ -63,6 +64,20 @@ struct ProfileView: View {
                             }
                         }
                         .pickerStyle(.segmented)
+                    }
+
+                    Section {
+                        ShareLink(
+                            item: RunsCSVFile(csv: CSVExporter.csv(for: runs)),
+                            preview: SharePreview("Janell's Run export (\(runs.count) runs)")
+                        ) {
+                            Label("Export Runs (CSV)", systemImage: "square.and.arrow.up")
+                        }
+                        .disabled(runs.isEmpty)
+                    } header: {
+                        Text("Your Data")
+                    } footer: {
+                        Text("Saves every run as a spreadsheet file you can keep as a backup.")
                     }
 
                     Section("Feedback") {

@@ -16,6 +16,24 @@ enum PersonalRecords {
         }
     }
 
+    /// An event's PR: the fastest run at its main distance. That is the event's
+    /// typical distance when it has runs there, otherwise the distance run most
+    /// often (the longer one on a tie). Times at other distances don't compete.
+    static func eventBest(in runs: [Run], typicalDistance: Double?) -> Run? {
+        let byDistance = Dictionary(grouping: runs) { DistancePreset.groupingKey(forMiles: $0.distance) }
+        let typicalKey = typicalDistance.map { DistancePreset.groupingKey(forMiles: $0) }
+
+        let mainGroup = typicalKey.flatMap { byDistance[$0] }
+            ?? byDistance.values.max { a, b in
+                a.count != b.count ? a.count < b.count : (a.first?.distance ?? 0) < (b.first?.distance ?? 0)
+            }
+        return mainGroup?.min { $0.durationSeconds < $1.durationSeconds }
+    }
+
+    static func hasMultipleDistances(_ runs: [Run]) -> Bool {
+        Set(runs.map { DistancePreset.groupingKey(forMiles: $0.distance) }).count > 1
+    }
+
     /// The fastest run at each distance, longest distance first.
     static func best(in runs: [Run]) -> [Run] {
         var bestByDistance: [String: Run] = [:]
