@@ -29,4 +29,20 @@ struct PersonalRecordsTests {
         let best = PersonalRecords.best(in: PersonalRecords.eligibleRuns(from: runs, includeTraining: true))
         #expect(best.map(\.durationSeconds) == [5300, 1400])
     }
+
+    @Test func eventBestIgnoresFasterTimesAtOtherDistances() {
+        // Two half marathons and one 5K under the same event
+        let runs = [run(13.1, 7200), run(13.1, 7000), run(3.1, 1500)]
+        #expect(PersonalRecords.eventBest(in: runs, typicalDistance: 13.1)?.durationSeconds == 7000)
+        // With no typical distance, the distance run most often wins
+        #expect(PersonalRecords.eventBest(in: runs, typicalDistance: nil)?.durationSeconds == 7000)
+        #expect(PersonalRecords.hasMultipleDistances(runs))
+    }
+
+    @Test func eventBestFallsBackWhenNothingMatchesTypicalDistance() {
+        let runs = [run(6.2, 3500), run(6.2, 3400)]
+        #expect(PersonalRecords.eventBest(in: runs, typicalDistance: 13.1)?.durationSeconds == 3400)
+        #expect(!PersonalRecords.hasMultipleDistances(runs))
+        #expect(PersonalRecords.eventBest(in: [], typicalDistance: nil) == nil)
+    }
 }

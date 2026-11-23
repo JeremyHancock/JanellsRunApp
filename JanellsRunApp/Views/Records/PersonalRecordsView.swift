@@ -6,6 +6,7 @@ struct PersonalRecordsView: View {
     @Environment(UserPreferences.self) private var preferences
 
     @State private var selectedYear: Int?
+    @State private var drillDown: Run?
 
     private var eligibleRuns: [Run] {
         PersonalRecords.eligibleRuns(from: allRuns, includeTraining: preferences.includeTrainingInPRs)
@@ -42,11 +43,13 @@ struct PersonalRecordsView: View {
                     Spacer()
                 } else {
                     List(personalRecords) { pr in
-                        NavigationLink {
-                            DistanceDetailView(distance: pr.distance, includeTraining: preferences.includeTrainingInPRs)
-                        } label: {
+                        HStack {
                             prRow(pr)
+                            Image(systemName: "chevron.right")
+                                .font(.footnote.weight(.semibold))
+                                .foregroundStyle(.tertiary)
                         }
+                        .editsRun(pr) { drillDown = pr }
                     }
                     .listStyle(.plain)
                     .animation(.default, value: personalRecords.map(\.id))
@@ -54,6 +57,9 @@ struct PersonalRecordsView: View {
             }
             .navigationTitle("Personal Records")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(item: $drillDown) { pr in
+                DistanceDetailView(distance: pr.distance, includeTraining: preferences.includeTrainingInPRs)
+            }
             .onChange(of: yearOptions) {
                 if let year = selectedYear, !yearOptions.contains(year) {
                     selectedYear = nil

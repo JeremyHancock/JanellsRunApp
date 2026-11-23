@@ -9,10 +9,17 @@ struct RaceEventDetailView: View {
         (event.runs ?? []).sorted { $0.date < $1.date }
     }
 
+    /// The last earlier run at the same distance, so a 5K isn't compared with a half.
+    private func previousRun(before index: Int) -> Run? {
+        let key = DistancePreset.groupingKey(forMiles: sortedRuns[index].distance)
+        return sortedRuns[..<index].last { DistancePreset.groupingKey(forMiles: $0.distance) == key }
+    }
+
     var body: some View {
         List {
             ForEach(Array(sortedRuns.enumerated()), id: \.element.id) { index, run in
-                runRow(run, previousRun: index > 0 ? sortedRuns[index - 1] : nil)
+                runRow(run, previousRun: previousRun(before: index))
+                    .editsRun(run)
             }
         }
         .listStyle(.plain)

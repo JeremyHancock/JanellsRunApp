@@ -7,9 +7,17 @@ struct RunRowView: View {
 
     var body: some View {
         HStack {
-            Text(run.displayName)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .lineLimit(1)
+            HStack(spacing: 4) {
+                Text(run.displayName)
+                    .lineLimit(1)
+                if run.notes?.isEmpty == false {
+                    Image(systemName: "note.text")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .accessibilityLabel("Has notes")
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(preferences.formatNumber(preferences.displayDistance(run.distance)))
                 .frame(width: 55, alignment: .trailing)
