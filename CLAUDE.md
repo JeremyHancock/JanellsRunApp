@@ -11,6 +11,7 @@ Janell's Run is an iOS app for tracking running workouts, race results, and pers
 - Test: `xcodebuild test -project JanellsRunApp.xcodeproj -scheme JanellsRunApp -destination 'platform=iOS Simulator,name=<an installed iPhone>' -only-testing:JanellsRunAppTests`
 - `JanellsRunAppTests` holds unit tests (Swift Testing) for the utilities and preferences; CI runs them on every PR
 - `JanellsRunAppUITests` is an Athlinks import smoke test that calls the live Athlinks site; it is not run in CI
+- Code scanning runs from `.github/workflows/codeql.yml` (Swift, the Worker's JavaScript, and the workflows). GitHub's default setup is switched off because it can't build the Xcode project
 - The Xcode project uses file-system-synchronized groups, so new files are picked up without editing `project.pbxproj`
 - HealthKit requires a physical device -- it is unavailable in the Simulator
 
